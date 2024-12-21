@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+                    <key>BGTaskSchedulerPermittedIdentifiers</key>
+                    <array>
+                        <string>com.example.refresh</string>
+                    </array>
+                    <key>NSCameraUsageDescription</key>
+                    <string>앱이 카메라를 사용하려면 권한이 필요합니다.</string>
+                    <key>NSPhotoLibraryUsageDescription</key>
+                    <string>앱이 사진 라이브러리에 접근하려면 권한이 필요합니다.</string>
+                    <key>NSPhotoLibraryAddUsageDescription</key>
+                    <string>앱이 사진을 추가하려면 권한이 필요합니다.</string>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+</dict>
+</plist>
