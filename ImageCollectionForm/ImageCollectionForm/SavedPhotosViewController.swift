@@ -2,19 +2,17 @@
 //  SavedPhotosViewController.swift
 //  ImageCollectionForm
 //
-//  Created by 도현학 on 12/22/24.
-//
 
 import UIKit
 
-class SavedPhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SavedPhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     var savedData: [PhotoData] = []
     var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        savedData = DataManager.shared.loadData() // 로컬에서 데이터 불러오기
+        savedData = DataManager.shared.loadData()
         setupTableView()
     }
 
@@ -22,11 +20,9 @@ class SavedPhotosViewController: UIViewController, UITableViewDelegate, UITableV
         tableView = UITableView(frame: view.bounds)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.allowsSelectionDuringEditing = true // 편집 모드에서 선택 가능
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SavedPhotoCell") // 셀 등록
+        tableView.register(SavedPhotoCell.self, forCellReuseIdentifier: "SavedPhotoCell")
         view.addSubview(tableView)
 
-        // 삭제 버튼 추가
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(toggleEditingMode))
     }
 
@@ -40,32 +36,45 @@ class SavedPhotosViewController: UIViewController, UITableViewDelegate, UITableV
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SavedPhotoCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SavedPhotoCell", for: indexPath) as! SavedPhotoCell
         let data = savedData[indexPath.row]
-        cell.textLabel?.text = data.text
-        if let image = DataManager.shared.loadImage(from: data.imagePath) {
-            cell.imageView?.image = image
-        }
+        cell.configure(with: data, at: indexPath.row)
+        cell.textField.delegate = self
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100 // 셀 높이
+        return 100
     }
 
-    // 삭제 동작 추가
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // 데이터 삭제
             let photoToDelete = savedData[indexPath.row]
-            DataManager.shared.deleteImage(at: photoToDelete.imagePath) // 로컬 이미지 파일 삭제
-            savedData.remove(at: indexPath.row) // 데이터 배열에서 제거
-
-            // 테이블 뷰 갱신
+            DataManager.shared.deleteImage(at: photoToDelete.imagePath)
+            savedData.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-
-            // 데이터 저장
             DataManager.shared.saveData(photoData: savedData)
         }
+    }
+    
+    // UITextFieldDelegate: 리턴 키를 누르면 키보드 닫기
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // 키보드 닫기
+        return true
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let index = textField.tag // 태그를 통해 인덱스 가져오기
+        guard index >= 0, index < savedData.count else {
+            print("Error: Index \(index) out of range for savedData.")
+            return
+        }
+
+        // 텍스트를 업데이트하고 저장
+        savedData[index].text = textField.text ?? ""
+        print("Updated text for index \(index): \(savedData[index].text)")
+
+        // 저장소에 변경사항 저장
+        DataManager.shared.saveData(photoData: savedData)
     }
 }
