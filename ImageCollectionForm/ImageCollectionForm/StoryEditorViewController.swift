@@ -1,8 +1,3 @@
-//
-//  StoryEditorViewController.swift
-//  ImageCollectionForm
-//
-
 import UIKit
 
 class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate {
@@ -12,11 +7,17 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
     var thumbnailCollectionView: UICollectionView!
     var textField: UITextField!
     var currentIndex: Int = 0 // 현재 선택된 이미지의 인덱스
+    var originalViewFrame: CGRect? // 원래 뷰의 프레임
 
     override func viewDidLoad() {
         super.viewDidLoad()
         texts = Array(repeating: "", count: images.count) // 텍스트 배열 초기화
         setupUI()
+        setupKeyboardObservers()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self) // 옵저버 해제
     }
 
     func setupUI() {
@@ -61,6 +62,38 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
         thumbnailCollectionView.dataSource = self
         thumbnailCollectionView.register(ThumbnailCell.self, forCellWithReuseIdentifier: "ThumbnailCell")
         view.addSubview(thumbnailCollectionView)
+    }
+
+    func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+
+        if originalViewFrame == nil {
+            originalViewFrame = view.frame // 원래 뷰 프레임 저장
+        }
+
+        // 키보드가 나타날 때 텍스트 필드를 올리기
+        let keyboardHeight = keyboardFrame.height
+        let textFieldBottomY = textField.frame.maxY
+        let overlap = textFieldBottomY - (view.frame.height - keyboardHeight)
+
+        if overlap > 0 {
+            UIView.animate(withDuration: 0.3) {
+                self.view.frame.origin.y = -overlap - 20 // 여유 공간 추가
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(_ notification: Notification) {
+        if let originalFrame = originalViewFrame {
+            UIView.animate(withDuration: 0.3) {
+                self.view.frame = originalFrame
+            }
+        }
     }
 
     @objc func updateText(_ textField: UITextField) {

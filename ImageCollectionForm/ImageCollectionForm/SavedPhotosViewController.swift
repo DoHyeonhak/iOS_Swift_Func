@@ -1,8 +1,3 @@
-//
-//  SavedPhotosViewController.swift
-//  ImageCollectionForm
-//
-
 import UIKit
 
 class SavedPhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
