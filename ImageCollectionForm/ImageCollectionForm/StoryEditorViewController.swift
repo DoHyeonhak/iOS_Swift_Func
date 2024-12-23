@@ -7,7 +7,7 @@
 
 import UIKit
 
-class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate {
     var images: [UIImage] = [] // 선택된 이미지 배열
     var texts: [String] = [] // 각 이미지에 대응하는 텍스트 배열
     var mainImageView: UIImageView!
@@ -48,6 +48,7 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
         textField.placeholder = "Enter text for current image"
         textField.text = texts[currentIndex]
         textField.addTarget(self, action: #selector(updateText(_:)), for: .editingChanged)
+        textField.delegate = self // UITextFieldDelegate 설정
         view.addSubview(textField)
     }
 
@@ -98,5 +99,11 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
         currentIndex = indexPath.item
         mainImageView.image = images[currentIndex]
         textField.text = texts[currentIndex]
+    }
+
+    // UITextFieldDelegate: 리턴 키를 누르면 키보드 닫기
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // 키보드 닫기
+        return true
     }
 }
