@@ -2,14 +2,12 @@
 //  StoryEditorViewController.swift
 //  ImageCollectionForm
 //
-//  Created by 도현학 on 12/22/24.
-//
 
 import UIKit
 
 class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate {
-    var images: [UIImage] = [] // 선택된 이미지 배열
-    var texts: [String] = [] // 각 이미지에 대응하는 텍스트 배열
+    var images: [UIImage] = [] // 새로 추가된 이미지 배열
+    var texts: [String] = [] // 새로 추가된 각 이미지에 대응하는 텍스트 배열
     var mainImageView: UIImageView!
     var thumbnailCollectionView: UICollectionView!
     var textField: UITextField!
@@ -72,6 +70,7 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
     @objc func saveAndExit() {
         var photoData: [PhotoData] = []
 
+        // 새로 추가된 데이터를 저장
         for (index, image) in images.enumerated() {
             if let imageName = DataManager.shared.saveImage(image) {
                 let text = texts.indices.contains(index) ? texts[index] : ""
@@ -79,8 +78,8 @@ class StoryEditorViewController: UIViewController, UICollectionViewDelegate, UIC
             }
         }
 
-        // 새로운 데이터 병합하여 저장
-        DataManager.shared.saveData(photoData: photoData)
+        // 기존 데이터는 유지하고 새 데이터를 병합하여 저장
+        DataManager.shared.addNewData(photoData: photoData)
 
         navigationController?.popViewController(animated: true)
     }

@@ -1,10 +1,3 @@
-//
-//  DataManager.swift
-//  ImageCollectionForm
-//
-//  Created by 도현학 on 12/22/24.
-//
-
 import UIKit
 
 class DataManager {
@@ -18,16 +11,9 @@ class DataManager {
         dataFile = documentsDirectory.appendingPathComponent("photoData.json")
     }
 
-    // MARK: - 데이터 저장 (병합)
+    // MARK: - 데이터 저장
     func saveData(photoData: [PhotoData]) {
-        // 기존 데이터 불러오기
-        var existingData = loadData()
-        
-        // 새로운 데이터 병합
-        existingData.append(contentsOf: photoData)
-        
-        // 병합된 데이터 저장
-        if let jsonData = try? JSONEncoder().encode(existingData) {
+        if let jsonData = try? JSONEncoder().encode(photoData) {
             try? jsonData.write(to: dataFile)
         }
     }
@@ -56,5 +42,24 @@ class DataManager {
     func loadImage(from imageName: String) -> UIImage? {
         let imagePath = documentsDirectory.appendingPathComponent(imageName)
         return UIImage(contentsOfFile: imagePath.path)
+    }
+    
+    func addNewData(photoData: [PhotoData]) {
+        var existingData = loadData() // 기존 데이터를 불러옴
+        existingData.append(contentsOf: photoData) // 새 데이터를 추가
+        if let jsonData = try? JSONEncoder().encode(existingData) {
+            try? jsonData.write(to: dataFile)
+        }
+    }
+
+    // MARK: - 이미지 삭제
+    func deleteImage(at imagePath: String) {
+        let fileURL = documentsDirectory.appendingPathComponent(imagePath)
+        do {
+            try fileManager.removeItem(at: fileURL)
+            print("이미지 삭제 완료: \(imagePath)")
+        } catch {
+            print("이미지 삭제 실패: \(error.localizedDescription)")
+        }
     }
 }
