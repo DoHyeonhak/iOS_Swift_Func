@@ -28,7 +28,7 @@ class ViewController: UIViewController {
 
     func loadUSDZModel() {
         // USDZ 파일 경로 확인
-        guard let usdzURL = Bundle.main.url(forResource: "pancakes", withExtension: "usdz") else {
+        guard let usdzURL = Bundle.main.url(forResource: "airplane", withExtension: "usdz") else {
             print("USDZ 파일을 찾을 수 없습니다.")
             return
         }
@@ -57,16 +57,23 @@ class ViewController: UIViewController {
 
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         guard let entity = usdzEntity else { return }
+
+        // 화면의 크기 기반으로 회전 강도를 조절
+        let viewWidth = arView.bounds.width
+        let viewHeight = arView.bounds.height
+
+        // 제스처의 이동량 가져오기
         let translation = gesture.translation(in: arView)
 
         if gesture.state == .changed {
-            // 회전 각도 계산 (Y축과 X축 기준)
-            let angleX = Float(translation.y) * 0.01 // 위아래 드래그로 X축 회전
-            let angleY = Float(translation.x) * 0.01 // 좌우 드래그로 Y축 회전
+            // 회전 각도 계산
+            let angleY = Float(translation.x / viewWidth) * .pi // 좌우 드래그로 Y축 회전
+            let angleX = Float(translation.y / viewHeight) * .pi // 위아래 드래그로 X축 회전 (부호 반전 제거)
 
-            // 현재 회전에 추가
-            entity.transform.rotation *= simd_quatf(angle: angleX, axis: [1, 0, 0]) // X축 회전
-            entity.transform.rotation *= simd_quatf(angle: angleY, axis: [0, 1, 0]) // Y축 회전
+            // 현재 회전에 새로운 회전 적용
+            let rotationY = simd_quatf(angle: angleY, axis: [0, 1, 0]) // Y축 회전
+            let rotationX = simd_quatf(angle: angleX, axis: [1, 0, 0]) // X축 회전
+            entity.transform.rotation = rotationY * entity.transform.rotation * rotationX
 
             // 제스처 이동 초기화
             gesture.setTranslation(.zero, in: arView)
