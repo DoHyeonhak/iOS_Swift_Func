@@ -38,14 +38,14 @@
 		5F1B696C2D16B24000C69C4F /* Exceptions for "USDZControlProgram" folder in "USDZControlProgramTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				airplane.dataset/airplane.usdz,
+				USDZFiles/airplane.dataset/airplane.usdz,
 			);
 			target = 5F8900A22D16A72900C8AD5C /* USDZControlProgramTests */;
 		};
 		5F1B696D2D16B24000C69C4F /* Exceptions for "USDZControlProgram" folder in "USDZControlProgramUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				airplane.dataset/airplane.usdz,
+				USDZFiles/airplane.dataset/airplane.usdz,
 			);
 			target = 5F8900AC2D16A72900C8AD5C /* USDZControlProgramUITests */;
 		};
