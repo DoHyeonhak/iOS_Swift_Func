@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     let openModalButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Open", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .clear
         button.layer.cornerRadius = 10
